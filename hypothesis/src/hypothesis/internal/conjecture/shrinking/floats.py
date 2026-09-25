@@ -44,9 +44,11 @@ def _position_to_float(n: int) -> float:
 
 
 class Float(Shrinker):
+    # pyrefly: ignore [bad-override]
     def setup(self):
         self.debugging_enabled = True
 
+    # pyrefly: ignore [bad-override-param-name]
     def make_canonical(self, f):
         if math.isnan(f):
             # Distinguish different NaN bit patterns, while making each equal to itself.

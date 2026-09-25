@@ -472,6 +472,7 @@ def make_testcase(
         coverage=coverage,
         timing=timing,
         metadata=ObservationMetadata(
+            # pyrefly: ignore [bad-argument-type]
             **{
                 "traceback": data.expected_traceback,
                 "reproduction_decorator": (

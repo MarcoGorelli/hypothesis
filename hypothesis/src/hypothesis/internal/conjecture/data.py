@@ -904,6 +904,7 @@ class ConjectureData:
         #
         # See https://github.com/HypothesisWorks/hypothesis/issues/3926.
         if choice_type == "float":
+            # pyrefly: ignore [unbound-name]
             assert isinstance(value, float)
             if math.isnan(value):
                 value = int_to_float(float_to_int(value))
@@ -911,7 +912,10 @@ class ConjectureData:
         if observe:
             was_forced = forced is not None
             getattr(self.observer, f"draw_{choice_type}")(
-                value, constraints=constraints, was_forced=was_forced
+                # pyrefly: ignore [unbound-name]
+                value,
+                constraints=constraints,
+                was_forced=was_forced,
             )
             size = 0 if self.provider.avoid_realization else choices_size([value])
             if self.length + size > self.max_length:
@@ -1143,6 +1147,8 @@ class ConjectureData:
                 node.count -= 1
                 if node.count < 0:
                     self.mark_overrun()
+            # pyrefly false positive: https://github.com/facebook/pyrefly/issues/4887
+            # pyrefly: ignore [unbound-name]
             return choice
 
         if isinstance(value, ValueHole):
@@ -1331,6 +1337,7 @@ class ConjectureData:
                 finally:
                     # Subtract the time spent in GC to avoid overcounting, as it is
                     # accounted for at the overall example level.
+                    # pyrefly: ignore [unbound-name]
                     in_gctime = gc_cumulative_time() - gc_start_time
                     self.draw_times[key] = time.perf_counter() - start_time - in_gctime
             except Exception as err:

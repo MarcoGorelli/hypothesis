@@ -18,7 +18,7 @@ import unicodedata
 from collections.abc import Collection, Iterable
 from functools import cache
 from pathlib import Path
-from typing import Literal, TypeAlias
+from typing import Literal, TypeAlias, cast
 
 from hypothesis.configuration import storage_directory
 from hypothesis.control import _current_build_context
@@ -126,9 +126,13 @@ def charmap() -> dict[CategoryName, IntervalsT]:
                 pass
 
         # convert between lists and tuples
-        _charmap = {
-            k: tuple(tuple(pair) for pair in pairs) for k, pairs in tmp_charmap.items()
-        }
+        _charmap = cast(
+            dict[CategoryName, IntervalsT],
+            {
+                k: tuple(tuple(pair) for pair in pairs)
+                for k, pairs in tmp_charmap.items()
+            },
+        )
         # each value is a tuple of 2-tuples (that is, tuples of length 2)
         # and both elements of that tuple are integers.
         for vs in _charmap.values():
@@ -194,10 +198,10 @@ def intervals_from_codec(
     return res, non_roundtrip
 
 
-_categories: Categories | None = None
+_categories: CategoriesTuple | None = None
 
 
-def categories() -> Categories:
+def categories() -> CategoriesTuple:
     """Return a tuple of Unicode categories in a normalised order.
 
     >>> categories() # doctest: +ELLIPSIS

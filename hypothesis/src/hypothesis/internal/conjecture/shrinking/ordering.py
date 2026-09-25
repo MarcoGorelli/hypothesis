@@ -20,6 +20,7 @@ class Ordering(Shrinker):
     the elements of the sequence.
     """
 
+    # pyrefly: ignore [bad-override]
     def setup(self, key=identity):
         self.key = key
 

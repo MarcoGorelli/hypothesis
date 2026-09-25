@@ -421,5 +421,7 @@ def from_field(field: F) -> st.SearchStrategy[F | None]:
         strategy = strategy.filter(validate)
 
     if getattr(field, "null", False):
+        # pyrefly: ignore [bad-return]
         return st.none() | strategy
+    # pyrefly: ignore [bad-return]
     return strategy

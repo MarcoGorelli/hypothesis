@@ -17,6 +17,7 @@ from hypothesis.internal.conjecture.utils import identity
 
 
 class Collection(Shrinker):
+    # pyrefly: ignore [bad-override]
     def setup(
         self, *, ElementShrinker, min_size, to_order=identity, from_order=identity
     ):

@@ -263,6 +263,7 @@ def base_regex_strategy(
     alphabet: SearchStrategy | None,
 ) -> SearchStrategy:
     if parsed is None:
+        # pyrefly: ignore [bad-argument-type]
         parsed = sre_parse.parse(regex.pattern, flags=regex.flags)
     try:
         s = _strategy(
@@ -289,6 +290,7 @@ def regex_strategy(
 
     is_unicode = isinstance(regex.pattern, str)
 
+    # pyrefly: ignore [bad-argument-type]
     parsed = sre_parse.parse(regex.pattern, flags=regex.flags)
 
     if fullmatch:
@@ -412,7 +414,9 @@ def _strategy(
                     j += 1
 
                 if i + 1 < j:
+                    # pyrefly: ignore [bad-argument-type, bad-unpacking, not-iterable]
                     chars = empty.join(to_char(charcode) for _, charcode in codes[i:j])
+                    # pyrefly: ignore [bad-argument-type]
                     if invalid := chars_not_in_alphabet(alphabet, chars):
                         raise IncompatibleWithAlphabet(
                             f"Literal {chars!r} contains characters {invalid!r} "
@@ -439,6 +443,7 @@ def _strategy(
         if code == sre.LITERAL:
             # Regex 'a' (single char)
             c = to_char(value)
+            # pyrefly: ignore [bad-argument-type]
             if chars_not_in_alphabet(alphabet, c):
                 raise IncompatibleWithAlphabet(
                     f"Literal {c!r} is not in the specified alphabet"
@@ -452,7 +457,9 @@ def _strategy(
                     re.IGNORECASE | (context.flags & re.ASCII),
                 )
                 is not None
-                and not chars_not_in_alphabet(alphabet, c.swapcase())
+                and not chars_not_in_alphabet(
+                    alphabet, c.swapcase()  # pyrefly: ignore [bad-argument-type]
+                )
             ):
                 # We do the explicit check for swapped-case matching because
                 # eg 'ß'.upper() == 'SS' and ignorecase doesn't match it.
@@ -487,15 +494,19 @@ def _strategy(
                 while stack:
                     for char in stack.pop():
                         blacklist.add(char)
+                        # pyrefly: ignore [missing-attribute]
                         stack.extend(set(char.swapcase()) - blacklist)
 
             if is_unicode:
                 return _intervals_to_strategy(
                     unwrap_strategies(alphabet).intervals
-                    & charmap.query(exclude_characters=blacklist),
+                    & charmap.query(
+                        exclude_characters=blacklist  # pyrefly: ignore [bad-argument-type]
+                    ),
                     description=f"The negated literal {c!r}",
                 )
             else:
+                # pyrefly: ignore [unbound-name]
                 return binary_char.filter(lambda c: c not in blacklist)
 
         elif code == sre.IN:
@@ -548,7 +559,9 @@ def _strategy(
                 )
             else:
                 if context.flags & re.DOTALL:
+                    # pyrefly: ignore [unbound-name]
                     return binary_char
+                # pyrefly: ignore [unbound-name]
                 return binary_char.filter(lambda c: c != b"\n")
 
         elif code == sre.AT:

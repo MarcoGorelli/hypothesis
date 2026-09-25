@@ -414,6 +414,7 @@ def floats(
     if min_value is not None and (
         exclude_min or (min_arg is not None and min_value < min_arg)
     ):
+        assert min_arg is not None
         min_value = next_up_normal(
             min_value, width, allow_subnormal=assumed_allow_subnormal
         )
@@ -424,10 +425,13 @@ def floats(
             min_value = next_up_normal(
                 min_value, width, allow_subnormal=assumed_allow_subnormal
             )
+        # pyrefly false positive: https://github.com/facebook/pyrefly/issues/4885
+        assert min_value is not None
         assert min_value > min_arg
     if max_value is not None and (
         exclude_max or (max_arg is not None and max_value > max_arg)
     ):
+        assert max_arg is not None
         max_value = next_down_normal(
             max_value, width, allow_subnormal=assumed_allow_subnormal
         )
@@ -438,6 +442,8 @@ def floats(
             max_value = next_down_normal(
                 max_value, width, allow_subnormal=assumed_allow_subnormal
             )
+        # pyrefly false positive: https://github.com/facebook/pyrefly/issues/4885
+        assert max_value is not None
         assert max_value < max_arg
 
     if min_value == -math.inf:
